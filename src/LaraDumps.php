@@ -53,13 +53,9 @@ class LaraDumps
             $response = SendPayload::handle($this->fullUrl, $payload);
 
             if (!$response) {
-                if (!boolval(config('laradumps.auto_start_with_deeplink.enabled'))) {
-                    echo 'Could not connect to LaraDumps app. Is it closed?';
-
-                    exit;
+                if (boolval(config('laradumps.auto_start_with_deeplink.enabled'))) {
+                    OpenLaraDumps::execute();
                 }
-
-                OpenLaraDumps::execute();
             }
         }
 

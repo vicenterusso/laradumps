@@ -5,9 +5,22 @@ use Illuminate\View\Compilers\BladeCompiler;
 use LaraDumps\LaraDumps\LaraDumps;
 use LaraDumps\LaraDumps\Payloads\BladePayload;
 
+function dump_exists() : bool {
+    if (class_exists(LaravelRay::class)) {
+        try {
+            return true;
+        } catch (\Exception $exception) {
+            //
+        }
+    }
+    return false;
+}
+
 if (!function_exists('ds')) {
-    function ds(mixed ...$args): LaraDumps
+    function ds(mixed ...$args): LaraDumps|null
     {
+        if(!dump_exists()) return null;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
@@ -24,22 +37,24 @@ if (!function_exists('ds')) {
 }
 
 if (!function_exists('phpinfo')) {
-    function phpinfo(): LaraDumps
+    function phpinfo(): LaraDumps|null
     {
-        return ds()->phpinfo();
+        return ds()?->phpinfo();
     }
 }
 
 if (!function_exists('dsd')) {
     function dsd(mixed ...$args): void
     {
-        ds($args)->die();
+        ds($args)?->die();
     }
 }
 
 if (!function_exists('ds1')) {
-    function ds1(mixed ...$args): LaraDumps
+    function ds1(mixed ...$args): LaraDumps|null
     {
+        if(!dump_exists()) return null;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
@@ -56,8 +71,10 @@ if (!function_exists('ds1')) {
 }
 
 if (!function_exists('ds2')) {
-    function ds2(mixed ...$args): LaraDumps
+    function ds2(mixed ...$args): LaraDumps|null
     {
+        if(!dump_exists()) return null;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
@@ -74,8 +91,10 @@ if (!function_exists('ds2')) {
 }
 
 if (!function_exists('ds3')) {
-    function ds3(mixed ...$args): LaraDumps
+    function ds3(mixed ...$args): LaraDumps|null
     {
+        if(!dump_exists()) return null;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
@@ -92,8 +111,10 @@ if (!function_exists('ds3')) {
 }
 
 if (!function_exists('ds4')) {
-    function ds4(mixed ...$args): LaraDumps
+    function ds4(mixed ...$args): LaraDumps|null
     {
+        if(!dump_exists()) return null;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
@@ -110,8 +131,10 @@ if (!function_exists('ds4')) {
 }
 
 if (!function_exists('ds5')) {
-    function ds5(mixed ...$args): LaraDumps
+    function ds5(mixed ...$args): LaraDumps|null
     {
+        if(!dump_exists()) return null;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
@@ -130,13 +153,15 @@ if (!function_exists('ds5')) {
 if (!function_exists('dsBlade')) {
     function dsBlade(mixed $args): void
     {
+        if(!dump_exists()) return;
+
         $trace = collect(debug_backtrace())
             ->filter(function ($trace) {
                 return $trace['function'] === 'render' && $trace['class'] === 'Illuminate\View\View';
             })->first();
 
         /** @var BladeCompiler $blade
-        * @phpstan-ignore-next-line */
+         * @phpstan-ignore-next-line */
         $blade     = $trace['object'];
         $viewPath  = $blade->getPath();
 
@@ -148,12 +173,16 @@ if (!function_exists('dsBlade')) {
         $notificationId = Str::uuid()->toString();
         $ds             = new LaraDumps(notificationId: $notificationId, trace: $trace);
         $ds->send(new BladePayload($args, $viewPath));
+
+        return;
     }
 }
 
 if (!function_exists('dsq')) {
     function dsq(mixed ...$args): void
     {
+        if(!dump_exists()) return;
+
         $trace   = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0];
 
         $notificationId = Str::uuid()->toString();
